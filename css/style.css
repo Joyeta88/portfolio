@@ -401,8 +401,34 @@ a:hover {
 .project-card p {
   color: var(--text-muted);
   font-size: 0.92rem;
-  flex: 1;
+  margin: 0 0 0.75rem;
+}
+
+.project-highlights {
+  list-style: none;
+  padding: 0;
   margin: 0 0 1rem;
+  flex: 1;
+}
+
+.project-highlights li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.project-highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .project-card .card-link {
@@ -525,4 +551,253 @@ a:hover {
   .theme-toggle {
     margin-left: 0;
   }
+}
+
+/* Case study pages */
+.case-study {
+  padding: 2rem 0 4rem;
+}
+
+.case-study .container {
+  width: min(760px, 92vw);
+}
+
+.case-back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.case-study h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.case-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.case-study h2 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  margin: 2.5rem 0 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.case-study h2:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.case-study h3 {
+  font-size: 1.05rem;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.case-study p,
+.case-study li {
+  color: var(--text-muted);
+}
+
+.case-study strong {
+  color: var(--text);
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.impact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.impact-card .value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.impact-card .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.arch-diagram {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  color: var(--text);
+  white-space: pre;
+}
+
+.callout {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 1.5rem 0;
+}
+
+.callout p {
+  margin: 0;
+  color: var(--text);
+}
+
+.case-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.case-table th,
+.case-table td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+.case-table th {
+  background: var(--bg-alt);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.case-table td {
+  color: var(--text-muted);
+}
+
+/* Flow diagrams (Mermaid + figures) */
+.case-study .container--wide {
+  width: min(920px, 94vw);
+}
+
+.flow-figure {
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+}
+
+.flow-figure figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.mermaid-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 0.75rem;
+  overflow-x: auto;
+  box-shadow: var(--shadow);
+}
+
+.mermaid-wrap .mermaid {
+  display: flex;
+  justify-content: center;
+  min-height: 2rem;
+}
+
+.mermaid-wrap svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.flow-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+
+@media (min-width: 720px) {
+  .flow-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* CSS fallback: simple vertical pipeline (no JS) */
+.flow-pipeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.flow-pipeline .flow-node {
+  width: min(100%, 320px);
+  padding: 0.65rem 1rem;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.flow-pipeline .flow-node small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.flow-pipeline .flow-node--bronze {
+  border-color: #b45309;
+  background: rgba(180, 83, 9, 0.08);
+}
+
+.flow-pipeline .flow-node--silver {
+  border-color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+}
+
+.flow-pipeline .flow-node--gold {
+  border-color: #ca8a04;
+  background: rgba(202, 138, 4, 0.1);
+}
+
+.flow-pipeline .flow-node--platinum {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.flow-pipeline .flow-arrow {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.35rem 0;
 }

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Case study: semantic medallion architecture with incremental pipelines, MERGE-based ingestion, and AI-assisted validation for customer journey analytics." />
+  <title>Incremental Medallion Pipeline | Joyeta Chatterjee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">Joyeta Chatterjee</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <article class="case-study">
+    <div class="container container--wide">
+      <a class="case-back" href="../index.html#projects">← Back to projects</a>
+
+      <p class="eyebrow">Data Engineering · Medallion Architecture · AI-Assisted Delivery</p>
+      <h1>Semantic medallion pipelines for customer journey analytics</h1>
+      <p class="lead">
+        Replaced daily full-season table rebuilds with an incremental, layered lakehouse design—cutting
+        end-to-end runtime by roughly <strong>6–10×</strong> while preserving funnel and conversion metrics
+        that leadership relies on for season-close reporting.
+      </p>
+
+      <div class="case-meta">
+        <span class="tag">Databricks</span>
+        <span class="tag">ETL/ELT</span>
+        <span class="tag">MERGE</span>
+        <span class="tag">Medallion</span>
+        <span class="tag">Cursor / Claude</span>
+      </div>
+
+      <h2>Impact at a glance</h2>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <span class="value">~5.5 min</span>
+          <span class="label">Measured daily runtime (was 30–60 min full reload)</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">&lt;0.05%</span>
+          <span class="label">Max daily user-count delta vs legacy on settled dates</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">0</span>
+          <span class="label">Delta on conversion-critical funnel steps (validated)</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">~125×</span>
+          <span class="label">Fewer users re-aggregated per run (&lt;1% of population)</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Outcome:</strong> Two independent validation phases (full-season backfill and true daily
+          incremental execution) produced the same delta signature—timing artifacts from run schedule,
+          not logic errors. The design was approved for production cutover with a short parallel-run
+          window against the legacy drop-and-recreate jobs.
+        </p>
+      </div>
+
+      <h2>How AI was used end to end</h2>
+      <p>
+        This was not “AI wrote SQL and we shipped it.” AI accelerated every phase of the lifecycle while
+        deterministic checks stayed in control:
+      </p>
+      <ul>
+        <li><strong>Develop</strong> — Pair-programmed incremental SQL (layered MERGE, changed-user detection, orchestration) in an agentic IDE; iterated on partition strategy, dedupe keys, and aggregate grain with rapid test cycles on the warehouse.</li>
+        <li><strong>Align</strong> — Generated validation memos, architecture diagrams, and stakeholder-facing summaries so analytics, product, and finance could agree on what “match to legacy” meant before production.</li>
+        <li><strong>Validate</strong> — Built repeatable test-vs-production comparison queries and edge-case playbooks (lookback boundaries, late arrivals, asymmetric dimension joins); used AI to document root causes when deltas appeared.</li>
+        <li><strong>Monitor</strong> — Codified monitoring thresholds (daily user volume, step-level funnel counts, runtime per layer) and runbooks for extended lookback after upstream delays.</li>
+      </ul>
+      <p>
+        The result was faster iteration without sacrificing auditability—every anomaly was traced to
+        <em>when</em> data landed or <em>when</em> identity mappings updated, not silent logic drift.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  subgraph AI["AI-assisted delivery lifecycle"]
+    direction LR
+    D["Develop\nSQL · partitions · keys"]
+    A["Align\nmemos · architecture"]
+    V["Validate\ntest vs legacy"]
+    M["Monitor\nthresholds · runbooks"]
+    D --> A --> V --> M
+    M -.->|refine| D
+    V -.->|edge cases| D
+  end</div>
+        </div>
+        <figcaption>Figure 1 — AI accelerated each phase; warehouse comparisons remained the source of truth.</figcaption>
+      </figure>
+
+      <h2>Problem: full reloads at seasonal scale</h2>
+      <p>
+        The legacy pattern dropped and recreated entire seasonal clickstream and journey-aggregate tables
+        every morning. Each run re-scanned 100+ days of raw event partitions and re-computed aggregates for
+        the full active population—even when only a small fraction had new activity overnight.
+      </p>
+      <p>
+        That approach was simple but expensive: long runtimes during peak season, unnecessary compute,
+        and fragile timing when raw events or identity bridges arrived after the morning rebuild.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  subgraph LEG["Legacy: drop and full reload"]
+    L1["Drop seasonal tables"]
+    L2["Scan 100+ days of raw partitions"]
+    L3["Re-aggregate entire active population"]
+    L4["30–60 min estimated runtime"]
+    L1 --> L2 --> L3 --> L4
+  end
+  subgraph INC["Incremental: medallion + MERGE"]
+    I1["Read 2-day load window only"]
+    I2["MERGE into persistent bronze"]
+    I3["Re-aggregate changed users only"]
+    I4["~5.5 min measured runtime"]
+    I1 --> I2 --> I3 --> I4
+  end</div>
+        </div>
+        <figcaption>Figure 2 — Legacy full reload vs incremental daily path (compute and scope).</figcaption>
+      </figure>
+
+      <h2>Solution: semantic medallion layers + incremental processing</h2>
+      <p>
+        I designed a <strong>multi-layer medallion architecture</strong> where each stage has a clear semantic
+        contract. Downstream metrics consume governed layers—not raw events—so funnel definitions stay
+        stable even when ingestion is incremental.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  R[("Raw event lake\npartition-pruned read")]
+  R -->|"MERGE + dedupe\nnatural key"| B["Bronze\nPersistent event grain"]
+  B --> S["Silver\nJourney touchpoint flags"]
+  S --> G["Gold\nState · rankings · cross-source joins"]
+  G --> P["Platinum\nDaily funnel metrics"]
+  P --> C["Dashboards &\ndownstream consumers"]
+
+  classDef bronze fill:#fef3c7,stroke:#b45309,color:#0f172a
+  classDef silver fill:#f1f5f9,stroke:#64748b,color:#0f172a
+  classDef gold fill:#fef9c3,stroke:#ca8a04,color:#0f172a
+  classDef plat fill:#ccfbf1,stroke:#0d9488,color:#0f172a
+  class B bronze
+  class S silver
+  class G gold
+  class P plat</div>
+        </div>
+        <figcaption>Figure 3 — Semantic medallion flow: each layer has a governed contract before metrics are published.</figcaption>
+      </figure>
+
+      <div class="flow-pipeline" aria-label="Medallion layer summary">
+        <div class="flow-node">Raw events<small>Short lookback ingest</small></div>
+        <span class="flow-arrow" aria-hidden="true">↓</span>
+        <div class="flow-node flow-node--bronze">Bronze<small>MERGE · idempotent grain</small></div>
+        <span class="flow-arrow" aria-hidden="true">↓</span>
+        <div class="flow-node flow-node--silver">Silver<small>Touchpoint flags per customer</small></div>
+        <span class="flow-arrow" aria-hidden="true">↓</span>
+        <div class="flow-node flow-node--gold">Gold<small>Journey state · last-touch logic</small></div>
+        <span class="flow-arrow" aria-hidden="true">↓</span>
+        <div class="flow-node flow-node--platinum">Platinum<small>Daily funnel step counts</small></div>
+      </div>
+
+      <h3>Layer 1 — MERGE instead of drop/recreate</h3>
+      <p>
+        The bronze layer uses <strong>MERGE</strong> into a persistent table: only the last <em>N</em> days of
+        load partitions are read from source, and rows upsert on a natural key
+        (customer, event time, screen, load partition). Re-runs are safe—duplicate inserts are prevented.
+      </p>
+      <p>
+        This replaced the anti-pattern of dropping a season-wide table and hoping the morning job finishes
+        before downstream consumers refresh.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  subgraph WIN["Daily bronze ingest"]
+    P1["Load partition\nDay N-1"]
+    P2["Load partition\nDay N"]
+    P1 --> READ["Read 2-day window"]
+    P2 --> READ
+  end
+  READ --> MERGE["MERGE into bronze\nupsert on natural key"]
+  MERGE --> PERSIST[("Persistent bronze table\nno drop/recreate")]</div>
+        </div>
+        <figcaption>Figure 4 — Bronze layer: overlapping partitions feed a single MERGE (not drop/insert).</figcaption>
+      </figure>
+
+      <h3>Lookback window design</h3>
+      <p>
+        I ran a formal <strong>lookback study</strong> comparing 2-day vs 7-day ingestion windows on billions
+        of events:
+      </p>
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Window</th>
+            <th>Events captured</th>
+            <th>Relative runtime</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2 days (chosen)</td>
+            <td>~99.99% of volume</td>
+            <td>Baseline (~60 min estimated full stack)</td>
+          </tr>
+          <tr>
+            <td>7 days</td>
+            <td>~99.9999% (+0.01% gain)</td>
+            <td>~2.5–3× longer — rejected</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The remaining ~0.01% of events arriving more than two days late are still captured on a later run
+        because MERGE is idempotent—no need to widen the window and pay a 3× compute penalty every day.
+        For upstream outages beyond two days, a one-time extended lookback backfill is documented.
+      </p>
+
+      <h3>Layer 2+ — Targeted re-aggregation (not full recompute)</h3>
+      <p>
+        Higher layers identify <strong>customers with new bronze activity</strong>, delete only their stale
+        aggregate rows, and re-insert fresh journey features. On a typical mid-season day that is on the
+        <strong>&lt;1% of the daily active population</strong>—roughly 125× less work than a full rebuild.
+      </p>
+      <p>
+        Deeper layers apply <strong>FULL OUTER JOIN</strong> patterns where two asynchronous sources
+        (behavioral events vs transactional outcomes) can arrive in either order, so funnel completeness does
+        not depend on which source lands first.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">sequenceDiagram
+  autonumber
+  participant O as Daily orchestrator
+  participant S as Source partitions
+  participant B as Bronze MERGE
+  participant H as Silver / Gold / Platinum
+  participant Q as Quality gates
+
+  O->>S: Read N-day lookback window
+  S-->>B: New and late-arriving events
+  B->>B: Upsert by natural key
+  B->>H: List customers with new bronze rows
+  H->>H: DELETE prior rows for those IDs only
+  H->>H: INSERT refreshed journey features
+  H->>Q: Emit funnel step counts
+  Q-->>O: Alert if volume or step drift</div>
+        </div>
+        <figcaption>Figure 5 — Daily incremental orchestration: MERGE first, then targeted delete/insert on higher layers.</figcaption>
+      </figure>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  subgraph TOUCH["Journey encoded in layers"]
+    E["Early\nentry · discovery"]
+    M["Mid\nconsent · disclosure"]
+    L["Late\nselection · commitment"]
+    E --> M --> L
+  end
+  L --> MET["Platinum funnel metrics\none row per step per day"]
+  MET --> VAL["Validation priority\nconversion-critical steps = exact match"]</div>
+        </div>
+        <figcaption>Figure 6 — Touchpoints materialize in silver/gold before they become daily funnel metrics.</figcaption>
+      </figure>
+
+      <h2>Customer journey touchpoints in metric definitions</h2>
+      <p>
+        A core design goal was that <strong>metric definitions encode the journey</strong>, not just counts
+        from a wide event table. Silver and gold layers materialize explicit touchpoints—for example:
+      </p>
+      <ul>
+        <li>Early journey: entry screens and option discovery</li>
+        <li>Mid journey: consent, disclosure, and policy acceptance</li>
+        <li>Late journey: selection, confirmation, and outcome alignment</li>
+      </ul>
+      <p>
+        Platinum aggregates expose these as daily funnel steps so product and finance see the same
+        progression. Validation focused on <strong>conversion-critical steps</strong> (legal consent,
+        terms, commitment events)—those showed <strong>zero delta</strong> vs legacy on settled dates.
+        Top-of-funnel view counts showed small negative deltas when identity bridges updated between runs;
+        that behavior was documented and expected under incremental scheduling.
+      </p>
+      <p>
+        <strong>Last-touch ranking</strong> (e.g., which option was selected most recently) can
+        temporarily lag if a late event arrives; subsequent daily runs self-correct—another reason MERGE +
+        incremental re-aggregation beats one-shot full reloads.
+      </p>
+
+      <h2>Late-arriving clickstream data</h2>
+      <p>
+        Late arrival is normal in high-volume behavioral pipelines: batch boundaries, timezone alignment,
+        and upstream load delays mean “event day” and “land day” diverge for a meaningful share of traffic
+        (~27% landing one day after the user action in my lag study).
+      </p>
+      <p>
+        The operating model has three parts:
+      </p>
+      <ol>
+        <li><strong>Overlapping lookback</strong> — Each daily run re-reads two load partitions so yesterday’s late landers are merged into bronze.</li>
+        <li><strong>MERGE idempotency</strong> — Events that appear three or more days late are picked up when their partition finally lands—no silent drop.</li>
+        <li><strong>Interpretation of positive deltas</strong> — When incremental runs later in the day than legacy morning rebuilds, same-day counts can be <em>higher</em>—that is completeness improving, not a bug. Both validation phases showed this pattern on the freshest date.</li>
+      </ol>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  T["User action\nDay T"] --> L1["Batch lands\nDay T+1"]
+  L1 --> R1["Run 1\nMERGE captures event"]
+  R1 --> L2["Rare: lands\nDay T+3"]
+  L2 --> R2["Run 2\nidempotent MERGE"]
+  R2 --> AGG["Next aggregate pass\nupdates funnel counts"]</div>
+        </div>
+        <figcaption>Figure 7 — Late-arriving events: overlap + MERGE; aggregates catch up on the next run.</figcaption>
+      </figure>
+
+      <h2>Validation & monitoring</h2>
+      <h3>Phase 1 — Full-season backfill</h3>
+      <p>
+        Seeded test tables with a one-time seasonal backfill, then compared 30 consecutive reporting days.
+        Historical dates landed within tight user-volume tolerance (&lt;0.05%) with conversion steps matching exactly.
+      </p>
+      <h3>Phase 2 — True daily incremental</h3>
+      <p>
+        Ran the production orchestration (MERGE → delete changed users → insert fresh aggregates) against
+        those test tables. Measured layer timings: ~4.3 min bronze MERGE, ~1 min silver/gold refresh,
+        <strong>~5.5 min total</strong>. Fifteen-day funnel comparison replicated the same delta story.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  P1["Phase 1\nSeason backfill into test tables"]
+  P1 --> C1["30-day compare\nvolume + funnel steps"]
+  C1 --> P2["Phase 2\nTrue daily incremental job"]
+  P2 --> C2["15-day funnel replay\n+ runtime benchmarks"]
+  C2 --> GATE{"Conversion steps\nmatch legacy?"}
+  GATE -->|Yes| CUT["Parallel run\n→ production cutover"]
+  GATE -->|Investigate| RC["Root-cause playbook\ntiming · identity · lookback"]
+  RC --> P2</div>
+        </div>
+        <figcaption>Figure 8 — Two-phase validation before production cutover.</figcaption>
+      </figure>
+
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Full reload (legacy)</th>
+            <th>Incremental (new)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Source partitions scanned (bronze)</td>
+            <td>100+ days</td>
+            <td>2 days</td>
+          </tr>
+          <tr>
+            <td>Population re-aggregated</td>
+            <td>Full active base</td>
+            <td>Changed users only (&lt;1%)</td>
+          </tr>
+          <tr>
+            <td>Daily runtime</td>
+            <td>30–60 min (est.)</td>
+            <td>5.5 min (measured)</td>
+          </tr>
+          <tr>
+            <td>Idempotency</td>
+            <td>Rebuild-only</td>
+            <td>MERGE + targeted delete/insert</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Role & stack</h2>
+      <p>
+        <strong>Role:</strong> Lead analytics engineer — architecture, SQL, validation design, production
+        readiness, and stakeholder sign-off.<br />
+        <strong>Stack:</strong> Lakehouse SQL warehouse, Delta-style tables, orchestrated ELT jobs,
+        Python runner for statement execution, agentic IDE for development and documentation.
+      </p>
+
+      <h2>What I’d tell another team</h2>
+      <ul>
+        <li>Invest in <strong>semantic layers</strong> before incrementalizing—otherwise you incrementally reload chaos.</li>
+        <li>Prefer <strong>MERGE + narrow lookback</strong> over widening windows; let idempotency handle the long tail.</li>
+        <li>Validate <strong>funnel steps that matter for decisions</strong>, not only top-line user counts.</li>
+        <li>Use AI for <strong>speed of iteration and explanation</strong>, not as the source of truth for metrics.</li>
+      </ul>
+
+      <p style="margin-top: 2.5rem;">
+        <a class="btn btn-primary" href="../index.html#projects">More projects</a>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Joyeta Chatterjee</p>
+      <p class="footer-note"><a href="../index.html">Home</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/case-study-mermaid.js" defer></script>
+</body>
+</html>

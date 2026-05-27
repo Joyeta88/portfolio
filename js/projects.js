@@ -90,13 +90,19 @@ const PROJECTS = [
   },
   {
     id: "incremental-pipelines",
-    title: "Incremental clickstream pipelines",
+    title: "Semantic medallion pipelines (incremental)",
     category: "intuit",
-    tags: ["Data Engineering", "Databricks", "Medallion"],
+    tags: ["Data Engineering", "Medallion", "AI-Assisted"],
     summary:
-      "Replaced daily full-season reloads with MERGE-based incremental layers—cut runtime from ~30–60 minutes to ~5.5 minutes with <0.05% validation delta vs production.",
+      "Medallion-layer journey analytics with MERGE ingestion, lookback windows, and AI-assisted design through validation monitoring.",
+    highlights: [
+      "~5.5 min daily runtime (was 30–60 min full reload)",
+      "<0.05% max volume delta vs legacy on settled dates",
+      "0 delta on conversion-critical funnel steps (validated)",
+      "~125× fewer users re-aggregated per run",
+    ],
     href: "projects/incremental-pipelines.html",
-    status: "draft",
+    status: "live",
   },
   {
     id: "eos-waterfall-5de",

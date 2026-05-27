@@ -19,10 +19,13 @@ Paste bullets under each section. Prompt example:
 
 ## incremental-pipelines
 
-- Full reload 30-60 min → incremental 5.5 min
-- MERGE layer 1, targeted re-agg layer 2
-- Two-phase validation: backfill + daily incremental
-- <0.05% delta vs prod on historical dates
+**Status: LIVE** → `projects/incremental-pipelines.html`
+
+- Impact-first case study (no proprietary names)
+- Medallion semantic layers, MERGE vs drop/recreate
+- Lookback analysis (2-day vs 7-day), late-arriving events
+- Funnel touchpoints in metric definitions
+- AI: develop, align, validate, monitor E2E
 
 ---
 

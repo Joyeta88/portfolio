@@ -69,6 +69,13 @@
         const isDraft = p.status === "draft";
         const linkLabel = isDraft ? "Case study coming soon" : "Read case study →";
         const href = isDraft ? "#" : p.href;
+        const highlights =
+          Array.isArray(p.highlights) && p.highlights.length
+            ? `<ul class="project-highlights">${p.highlights
+                .map((h) => `<li>${escapeHtml(h)}</li>`)
+                .join("")}</ul>`
+            : "";
+
         return `
         <article class="project-card${isDraft ? " coming-soon" : ""}">
           <div class="project-tags">
@@ -76,6 +83,7 @@
           </div>
           <h3>${escapeHtml(p.title)}</h3>
           <p>${escapeHtml(p.summary)}</p>
+          ${highlights}
           <a class="card-link" href="${escapeHtml(href)}">${linkLabel}</a>
         </article>`;
       })
