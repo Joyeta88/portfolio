@@ -8,12 +8,11 @@ Paste bullets under each section. Prompt example:
 
 ## intuit-ai-governance
 
-- Governance before broad AI rollout
-- Business tables stabilized before plugins
-- 30+ skills/plugins
-- MCP: lake, dictionary, dashboards
-- Office hours, Friday demos
-- Finance + Product + DS stakeholders
+**Status: LIVE** → `projects/intuit-ai-governance.html`
+
+- ECC Money scorecard: 17 KPIs, 13 dimensions
+- 30+ skills/plugins, MCP, adoption program
+- Governance-before-scale narrative + flow diagrams
 
 ---
 
