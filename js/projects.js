@@ -80,16 +80,16 @@ const EXPERIENCE = [
 const PROJECTS = [
   {
     id: "intuit-ai-governance",
-    title: "Governed ECC Money KPIs & AI enablement",
+    title: "Executive Scorecards & governed AI adoption",
     category: "intuit",
-    tags: ["ECC", "AI Governance", "Skills"],
+    tags: ["Executive Scorecards", "Governance", "AI Adoption"],
     summary:
-      "Standardized Money executive scorecard on ECC (17 KPIs, 13 dimensions) and shipped 30+ skills/plugins so Finance, Product, and DS share one governed definition of truth.",
+      "Built a governed KPI portfolio for Money products on Executive Scorecards—contracts first, then 30+ skills/plugins and a five-phase adoption program for Finance, Product, and DS.",
     highlights: [
-      "17 KPIs · 13 dimensions on Money ECC scorecard",
-      "30+ agent skills & plugins (pipelines, scorecard trace, SQL orchestrator)",
-      "6–7 monetization products under one KPI framework",
-      "MCP-connected copilots + office hours adoption program",
+      "17 KPIs · 13 dimensions on Money executive scorecard",
+      "30+ skills & plugins with contract-first agent workflows",
+      "6–7 products under one scorecard framework",
+      "Five-phase adoption: prepare → publish → ship → connect → enable",
     ],
     href: "projects/intuit-ai-governance.html",
     status: "live",
