@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Case study: enterprise healthcare analytics migration to first-party medallion architecture and KPI governance for 11+ partner teams." />
+  <title>Enterprise BI Migration & Medallion KPI Platform | Joyeta Chatterjee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">Joyeta Chatterjee</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <article class="case-study">
+    <div class="container container--wide">
+      <a class="case-back" href="../index.html#projects">← Back to projects</a>
+
+      <p class="eyebrow">Enterprise BI · Medallion Architecture · KPI Governance</p>
+      <h1>Healthcare analytics migration: third-party stack to governed first-party platform</h1>
+      <p class="lead">
+        Co-authored the target architecture for an enterprise <strong>Operations Data Studio</strong>—migrating
+        analytics off a third-party warehouse and visualization stack onto a <strong>first-party AWS
+        lakehouse</strong> with medallion layers, standardized KPI datasets, and a governance model
+        serving <strong>11+ partner teams</strong>.
+      </p>
+
+      <div class="case-meta">
+        <span class="tag">Medallion</span>
+        <span class="tag">Migration</span>
+        <span class="tag">KPI Governance</span>
+        <span class="tag">S3 · Spark · Glue</span>
+        <span class="tag">Redshift · Athena</span>
+      </div>
+
+      <h2>Impact at a glance</h2>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <span class="value">200+</span>
+          <span class="label">Dashboards migrated to governed datasets</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">500+</span>
+          <span class="label">Standardized KPIs in the enterprise catalog</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">700+</span>
+          <span class="label">Datasets brought under platform standards</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">11+</span>
+          <span class="label">Partner teams on shared definitions &amp; layers</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Outcome:</strong> One system of record for operations analytics—raw history preserved,
+          normalized entities reusable, gold-layer datasets optimized for reporting. Retired hundreds of
+          redundant pipelines while cutting platform cost and improving trust in leadership metrics.
+        </p>
+      </div>
+
+      <h2>The problem</h2>
+      <p>
+        Healthcare operations analytics had grown through years of federated extracts, vendor-hosted
+        warehouses, and team-specific logic. Dashboards diverged, refreshes were fragile, and
+        third-party tooling made cost and access hard to govern. Partner teams needed the same
+        operational truth without each building their own path from raw systems to slides.
+      </p>
+
+      <h2>Design approach</h2>
+      <p>
+        BI and data engineering leadership aligned on four design commitments (documented in the
+        platform architecture specification):
+      </p>
+      <ol>
+        <li><strong>Build once, reuse often</strong> — Compose larger capabilities from small, independently maintainable pipelines instead of monolithic one-off jobs.</li>
+        <li><strong>Quality over speed</strong> — Production changes pass code review; favor durable solutions over quick fixes that break at scale.</li>
+        <li><strong>Right-sized serverless processing</strong> — Batch and streaming workloads on managed Spark with minimal operational overhead.</li>
+        <li><strong>Prepare for change</strong> — Modular layers so new sources, volume spikes, and org restructuring do not require greenfield rebuilds.</li>
+      </ol>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  subgraph PRIN["Design commitments"]
+    R["Reuse &amp; compose"]
+    Q["Quality &amp; review"]
+    S["Serverless scale"]
+    M["Modular change"]
+  end
+  R --> Q --> S --> M</div>
+        </div>
+        <figcaption>Figure 1 — Platform principles that guided every layer and template.</figcaption>
+      </figure>
+
+      <h2>Medallion architecture</h2>
+      <p>
+        The platform follows a classic <strong>bronze → silver → gold</strong> medallion pattern:
+        progressively refined data with clear contracts between layers. Authorized consumers
+        access the layer that matches their need—lineage at the bottom, performance at the top.
+      </p>
+
+      <h3>Bronze (raw zone)</h3>
+      <ul>
+        <li>Ingest from first-party operational systems, internal services, and approved third-party file feeds</li>
+        <li>Preserve historical, append-friendly archives for audit and reprocessing</li>
+        <li>Land in columnar object storage; register in the enterprise metadata catalog without unnecessary data movement</li>
+      </ul>
+
+      <h3>Silver (normalized zone)</h3>
+      <ul>
+        <li>Cleanse sensitive fields; deduplicate on stable entity keys</li>
+        <li>Model core business entities and events in normalized form (operations, fulfillment, orders, logistics—conceptually)</li>
+        <li>Serve ad hoc analysts, ML, and downstream engineering—not executive dashboards directly</li>
+      </ul>
+
+      <h3>Gold (analytics zone)</h3>
+      <p>Two governed flavors—this is the KPI medallion extension on top of classic medallion:</p>
+      <ul>
+        <li><strong>Denormalized / BI datasets</strong> — Subject-area tables with joins and business rules applied once; optimized for read patterns and BI tools</li>
+        <li><strong>Metric datasets</strong> — Daily-grain aggregates with standard dimension slices across subject areas; feed weekly business reviews and executive reporting</li>
+      </ul>
+      <p>
+        <strong>Hard rule:</strong> Metric datasets are built only from gold denormalized tables—never
+        directly from silver—so upstream schema changes do not silently break leadership KPIs.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  SRC["Sources\nops systems · files · services"]
+  BRZ["Bronze\nraw · historical archive"]
+  SLV["Silver\nnormalized · entity grain"]
+  DEN["Gold: denormalized datasets"]
+  MET["Gold: metric datasets"]
+  CON["BI · SQL workbench · reviews"]
+
+  SRC --> BRZ --> SLV --> DEN --> MET --> CON
+  SLV -.->|no direct path| MET</div>
+        </div>
+        <figcaption>Figure 2 — Medallion flow with a protected path from normalized data to KPIs.</figcaption>
+      </figure>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">sequenceDiagram
+  participant Raw as Bronze ingest
+  participant Stg as Silver staging
+  participant Den as Gold denormalized
+  participant Mtr as Gold metrics
+  participant Rpt as Reporting consumers
+
+  Raw->>Stg: Dedupe · typing · privacy controls
+  Stg->>Den: Joins · subject logic
+  Den->>Mtr: Daily grain · standard slices
+  Mtr->>Rpt: Dashboards · WBR packs</div>
+        </div>
+        <figcaption>Figure 3 — End-to-end processing pattern (conceptual).</figcaption>
+      </figure>
+
+      <h2>Migration: third-party to first-party</h2>
+      <p>
+        The program moved consumption from a third-party columnar warehouse and embedded BI
+        product to a first-party stack: object storage, catalog, serverless Spark, Glue-class
+        orchestration, interactive SQL on the lake, and a clustered warehouse for heavy analytics.
+      </p>
+
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Before</th>
+            <th>After</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>System of record</td>
+            <td>Fragmented extracts + vendor warehouse</td>
+            <td>Operations Data Studio medallion platform</td>
+          </tr>
+          <tr>
+            <td>Dataset standards</td>
+            <td>Team-by-team conventions</td>
+            <td>Templates for silver, denorm, and metric tables</td>
+          </tr>
+          <tr>
+            <td>KPI lineage</td>
+            <td>Often embedded in dashboard logic</td>
+            <td>Metadata catalog + unified metric process</td>
+          </tr>
+          <tr>
+            <td>Operational cost</td>
+            <td>High vendor licensing footprint</td>
+            <td>Material annual savings (pay-for-use processing)</td>
+          </tr>
+          <tr>
+            <td>Retired complexity</td>
+            <td>Overlapping ETL and unused jobs</td>
+            <td>400+ legacy pipelines decommissioned</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  subgraph LEG["Legacy"]
+    L1["Third-party warehouse"]
+    L2["Embedded BI catalog"]
+    L3["Team-specific ETL"]
+  end
+  subgraph NEW["First-party platform"]
+    N1["Lakehouse bronze/silver/gold"]
+    N2["Governed metric layer"]
+    N3["Shared consumption APIs"]
+  end
+  LEG -->|migration program| NEW</div>
+        </div>
+        <figcaption>Figure 4 — Migration shifted ownership to a governed internal platform.</figcaption>
+      </figure>
+
+      <h2>Quality standards &amp; governance</h2>
+      <p>Standards were as important as the technology choice:</p>
+      <ul>
+        <li><strong>Architecture templates</strong> — Standard designs for normalized tables, denormalized datasets, and metric datasets; designs reviewed and stored in a shared repository</li>
+        <li><strong>Code review on production paths</strong> — No ad hoc pushes; CI/CD deploys to production accounts</li>
+        <li><strong>Unified metric metadata</strong> — KPI meaning, grain, and refresh documented in a catalog table consumed by analytics and BI</li>
+        <li><strong>Partitioning &amp; keys</strong> — Silver optimized for entity integrity; gold optimized for partition pruning and predictable query cost</li>
+        <li><strong>Proactive monitoring</strong> — Pipeline health and freshness surfaced before stakeholder-facing reviews break</li>
+        <li><strong>Access &amp; ownership matrix</strong> — Layer-specific ownership (raw vs normalized vs reporting) with LDAP-style group access for SQL clients and dashboards</li>
+      </ul>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  TPL["Design templates"]
+  CR["Code review"]
+  CAT["Metric metadata catalog"]
+  MON["Monitoring &amp; alerts"]
+  GOV["11+ partner teams\nshared cuts"]
+
+  TPL --> CR --> CAT --> MON --> GOV</div>
+        </div>
+        <figcaption>Figure 5 — Governance chain from design standards to partner consumption.</figcaption>
+      </figure>
+
+      <h2>Technologies adopted</h2>
+      <p>
+        The platform was built on a standard AWS analytics stack—each service had a clear job in the
+        medallion flow, not overlapping responsibilities. Below is how the team used them in practice.
+      </p>
+
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Technology</th>
+            <th>Role on the platform</th>
+            <th>Typical layer / consumer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Amazon S3</strong></td>
+            <td>Central object store for columnar files (e.g. Parquet); durable bronze archive and shared handoff between federated BI teams</td>
+            <td>Bronze · cross-team sharing</td>
+          </tr>
+          <tr>
+            <td><strong>Apache Spark</strong> (managed)</td>
+            <td>Primary compute for dedupe, typing, joins, and business logic across bronze → silver → gold; SQL, Python, or Scala jobs with minimal cluster ops</td>
+            <td>Silver · Gold processing</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Glue Data Catalog</strong></td>
+            <td>System of record for table schemas, job definitions, partition metadata, and schema version history</td>
+            <td>All layers (metadata)</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Glue Crawlers</strong></td>
+            <td>Infer schemas on new landings, register partitions, keep catalog in sync—often triggered when objects arrive in S3</td>
+            <td>Bronze · Silver registration</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Glue ETL</strong></td>
+            <td>Managed jobs to prepare, transform, and load datasets where visual ETL or standardized job patterns fit</td>
+            <td>Silver · Gold</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon Athena</strong></td>
+            <td>Serverless SQL over open files in S3 for exploration, validation, and lightweight ad hoc analysis—pay per query</td>
+            <td>Bronze · Silver (analysts)</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon Redshift</strong></td>
+            <td>Columnar MPP warehouse for heavy joins, large history, and performance-sensitive reporting workloads</td>
+            <td>Gold · BI consumption</td>
+          </tr>
+          <tr>
+            <td><strong>CI/CD pipelines</strong></td>
+            <td>Version-controlled job code, mandatory review before production, automated deploys to approved accounts—reduced manual release errors</td>
+            <td>All pipeline code</td>
+          </tr>
+          <tr>
+            <td><strong>Cloud BI &amp; SQL clients</strong></td>
+            <td>Executive dashboards and analyst workbench access pointed at gold-layer datasets and governed metric tables</td>
+            <td>Gold · Metric layer</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Lake Formation</strong></td>
+            <td>Centralized permissions and data-lake governance across catalogs and consumers where teams publish and subscribe</td>
+            <td>Platform-wide access</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  subgraph ING["Ingest &amp; store"]
+    S3["S3\nraw columnar files"]
+    CRW["Glue Crawlers\nschema · partitions"]
+  end
+  subgraph PROC["Process"]
+    SPK["Spark jobs\ndedupe · joins · rules"]
+    GLU["Glue ETL\nmanaged transforms"]
+  end
+  subgraph META["Metadata &amp; ship"]
+    CAT["Glue Data Catalog"]
+    CICD["CI/CD\nreview · deploy"]
+  end
+  subgraph CONS["Consume"]
+    ATH["Athena\nad hoc SQL"]
+    RS["Redshift\nreporting scale"]
+    BI["Cloud BI\ndashboards · WBR"]
+  end
+  S3 --> CRW --> CAT
+  S3 --> SPK --> GLU --> CAT
+  CAT --> CICD
+  CAT --> ATH
+  CAT --> RS --> BI</div>
+        </div>
+        <figcaption>Figure 6 — How AWS services map to ingest, process, govern, and consume.</figcaption>
+      </figure>
+
+      <h3>How this supported migration</h3>
+      <ul>
+        <li><strong>S3 + Spark</strong> replaced vendor-hosted storage and transform patterns with an internal, pay-for-use model and clearer cost attribution per pipeline.</li>
+        <li><strong>Glue Crawlers + Catalog</strong> made new bronze landings discoverable quickly without manual schema documentation drift.</li>
+        <li><strong>Athena</strong> let teams validate migrations and debug layer logic before pointing dashboards at Redshift or BI.</li>
+        <li><strong>Redshift + BI</strong> became the consumption tier for gold and metric datasets—aligned with the rule that leadership KPIs never read silver directly.</li>
+        <li><strong>CI/CD</strong> turned pipeline changes into the same discipline as application software—critical when 11+ teams depended on the same platform.</li>
+      </ul>
+
+      <h2>My role</h2>
+      <p>
+        As a <strong>BI manager on the data foundations team</strong>, I co-led the architecture
+        specification with peer BI/DE managers, aligned 11+ partner teams on layer contracts, and
+        drove migration execution with a 15+ person analytics organization—dashboard moves, KPI
+        harmonization, pipeline retirement, and field enablement on the new platform.
+      </p>
+
+      <h2>What I’d tell another enterprise</h2>
+      <ul>
+        <li>Medallion only works if <strong>gold metric rules</strong> are explicit—protect KPIs from raw churn.</li>
+        <li>Templates and review gates scale better than hero pipelines.</li>
+        <li>Migration is a <strong>governance program</strong>, not a lift-and-shift of SQL.</li>
+        <li>Partner teams adopt when they see the same number in the meeting and in the catalog.</li>
+      </ul>
+
+      <p style="margin-top: 2.5rem;">
+        <a class="btn btn-primary" href="../index.html#projects">More projects</a>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Joyeta Chatterjee</p>
+      <p class="footer-note"><a href="../index.html">Home</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/case-study-mermaid.js" defer></script>
+</body>
+</html>
