@@ -30,13 +30,24 @@
   /* Skills */
   const skillsGrid = document.getElementById("skills-grid");
   if (skillsGrid && typeof SKILLS !== "undefined") {
-    skillsGrid.innerHTML = SKILLS.map(
-      (s) => `
+    skillsGrid.innerHTML = SKILLS.map((s) => {
+      const impact = s.impact
+        ? `<p class="skill-impact">${escapeHtml(s.impact)}</p>`
+        : "";
+      const tech =
+        Array.isArray(s.tech) && s.tech.length
+          ? `<div class="skill-tech">${s.tech
+              .map((t) => `<span class="skill-tech-chip">${escapeHtml(t)}</span>`)
+              .join("")}</div>`
+          : "";
+      return `
       <article class="skill-card">
         <h3>${escapeHtml(s.title)}</h3>
+        ${impact}
         <ul>${s.items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>
-      </article>`
-    ).join("");
+        ${tech}
+      </article>`;
+    }).join("");
   }
 
   /* Experience timeline */

@@ -165,8 +165,8 @@ a:hover {
 .hero-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 3rem;
-  align-items: center;
+  gap: 2.5rem;
+  align-items: start;
 }
 
 .eyebrow {
@@ -180,10 +180,11 @@ a:hover {
 
 .hero h1 {
   font-family: var(--font-serif);
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  line-height: 1.15;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  line-height: 1.2;
   font-weight: 600;
   margin: 0 0 1rem;
+  max-width: 22ch;
 }
 
 .lead {
@@ -229,9 +230,9 @@ a:hover {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
 }
 
 .hero-stats li {
@@ -250,31 +251,118 @@ a:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow);
 }
 
-.stack-diagram {
-  font-size: 0.85rem;
-  text-align: center;
+/* Hero impact panel (case-study stack) */
+.hero-impact-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: min(72vh, 640px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
-.stack-layer {
-  padding: 0.75rem 1rem;
-  background: var(--bg-alt);
-  border-radius: 8px;
-  border: 1px solid var(--border);
-}
-
-.stack-layer.accent {
-  background: var(--accent-soft);
-  border-color: var(--accent);
+.hero-panel-eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.7rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
 }
 
-.stack-arrow {
+.impact-layer {
+  padding: 0.85rem 1rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  border-left: 3px solid var(--border);
+}
+
+.impact-layer--lead {
+  border-left-color: var(--text-muted);
+}
+
+.impact-layer--accent {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-left-color: var(--accent);
+}
+
+.impact-layer--platform {
+  background: transparent;
+  border-style: dashed;
+}
+
+.impact-layer__badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.impact-layer__title {
+  margin: 0 0 0.25rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.impact-layer__detail {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  padding: 0.35rem 0;
+  line-height: 1.35;
+}
+
+.impact-layer__metrics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.impact-layer__metrics li {
+  margin-bottom: 0.2rem;
+}
+
+.impact-layer__metrics strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.impact-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.impact-tech span {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.impact-layer--accent .impact-tech span {
+  background: var(--surface);
+}
+
+.impact-tech--wrap {
+  margin-top: 0.35rem;
 }
 
 /* Sections */
@@ -296,10 +384,16 @@ a:hover {
   margin-bottom: 2rem;
 }
 
+.section-head h2 {
+  margin: 0 0 0.5rem;
+}
+
 .section-desc {
   color: var(--text-muted);
   max-width: 56ch;
-  margin: 0.5rem 0 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 /* Skills */
@@ -314,30 +408,66 @@ a:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .skill-card h3 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
   font-size: 1rem;
+  line-height: 1.3;
+}
+
+.skill-impact {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1.35;
 }
 
 .skill-card ul {
-  margin: 0;
+  margin: 0 0 0.85rem;
   padding-left: 1.1rem;
   color: var(--text-muted);
   font-size: 0.9rem;
+  flex: 1;
+}
+
+.skill-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.skill-tech-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
 }
 
 /* Projects */
 .projects-subhead {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 1rem;
   color: var(--text);
+  font-family: var(--font-sans);
 }
 
 .projects-subhead--filter {
   margin-top: 2.5rem;
+}
+
+#projects .section-head {
+  margin-bottom: 1.25rem;
 }
 
 #featured-projects-grid {
@@ -538,8 +668,21 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
   .hero-card {
     order: -1;
+    max-height: none;
+  }
+
+  .hero-impact-panel {
+    max-height: none;
+  }
+
+  .hero h1 {
+    max-width: none;
   }
 
   .nav {

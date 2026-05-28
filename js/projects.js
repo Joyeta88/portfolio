@@ -4,36 +4,44 @@
  */
 const SKILLS = [
   {
-    title: "Agentic AI & Copilots",
+    title: "Governed KPIs & executive scorecards",
+    impact: "17 KPIs · 13 dimensions · one Money portfolio surface",
     items: [
-      "LLM workflows (Claude, Cursor) with skills, rules, and plugins",
-      "MCP integrations to lake, dictionaries, and dashboards",
-      "Governance-first adoption and stakeholder enablement",
+      "Metric contracts and dimension playbooks before any agent or SQL ships",
+      "Executive Scorecards as the leadership system of record—not ad hoc decks",
+      "Finance vs product definition alignment and RCA when numbers diverge",
     ],
+    tech: ["Executive Scorecards", "Metric contracts", "Semantic layer"],
   },
   {
-    title: "Data Engineering",
+    title: "Agentic AI with guardrails",
+    impact: "30+ skills/plugins · five-phase adoption program",
     items: [
-      "Incremental pipelines & medallion-style layering",
-      "Databricks, Spark SQL, orchestration (Glue-class tools)",
-      "Fact/dimension modeling, semantic metrics, data quality",
+      "Contract-first Cursor/Claude workflows: skills, rules, MCP to lake & catalogs",
+      "Prepare → publish → ship → connect → enable across Finance, Product, DS",
+      "Deterministic metrics in control; LLMs accelerate design and validation",
     ],
+    tech: ["Cursor", "Claude", "MCP", "Skills & plugins"],
   },
   {
-    title: "Analytics & BI",
+    title: "Medallion & incremental pipelines",
+    impact: "~5.5 min daily runs · <0.05% delta vs legacy (validated)",
     items: [
-      "Power BI, Tableau, Looker, QuickSight",
-      "Variance analysis, waterfalls, Kitagawa decomposition",
-      "Executive dashboards and KPI governance",
+      "Bronze/silver/gold with MERGE ingestion, lookback, late-arriving events",
+      "AI-assisted design through dual-phase validation and monitoring",
+      "Funnel-grade quality: zero delta on conversion-critical steps",
     ],
+    tech: ["Databricks", "Spark SQL", "MERGE", "Medallion"],
   },
   {
-    title: "Leadership",
+    title: "Enterprise BI & platform leadership",
+    impact: "200+ dashboards · 500+ KPIs · 11+ partner teams",
     items: [
-      "Cross-functional partnership (Finance, Product, Risk, DS)",
-      "Team mentoring and analytics operating models",
-      "Forecasting, experimentation, ROI framing",
+      "Co-architected lakehouse migration: third-party stack → first-party AWS",
+      "Templates, code review, CI/CD, metric-layer rules (no KPIs from silver)",
+      "Led 15+ analysts; field enablement and pipeline retirement at scale",
     ],
+    tech: ["S3", "Glue", "Athena", "Redshift", "CI/CD", "Power BI"],
   },
 ];
 
