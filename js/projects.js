@@ -111,6 +111,22 @@ const PROJECTS = [
     status: "live",
   },
   {
+    id: "amazon-migration",
+    title: "Healthcare BI migration & medallion KPI platform",
+    category: "amazon",
+    tags: ["Medallion", "Migration", "Governance"],
+    summary:
+      "Co-architected Operations Data Studio: third-party stack to first-party lakehouse, bronze/silver/gold + metric layer, templates and governance for 11+ partner teams.",
+    highlights: [
+      "200+ dashboards migrated to governed gold & metric datasets",
+      "500+ KPIs · 700+ datasets under platform standards",
+      "400+ legacy pipelines retired · third-party stack sunset",
+      "11+ partner teams on shared medallion + metric-layer rules",
+    ],
+    href: "projects/amazon-migration.html",
+    status: "live",
+  },
+  {
     id: "eos-waterfall-5de",
     title: "End-of-season variance & waterfall ROI",
     category: "intuit",
@@ -138,16 +154,6 @@ const PROJECTS = [
     summary:
       "Python + SQL orchestration to populate daily money metrics grid—~60 seconds vs 20–30 minutes of manual copy-paste from multiple sources.",
     href: "projects/daily-money-automation.html",
-    status: "draft",
-  },
-  {
-    id: "amazon-migration",
-    title: "Enterprise BI migration & KPI SO T",
-    category: "amazon",
-    tags: ["Redshift", "Migration", "Leadership"],
-    summary:
-      "Led Snowflake/Looker to Redshift transition: 200+ dashboards, 700+ datasets, 400+ ETL retirements, and governed KPI definitions across 11+ partner teams.",
-    href: "projects/amazon-migration.html",
     status: "draft",
   },
   {
