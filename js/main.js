@@ -53,30 +53,29 @@
   }
 
   /* Projects */
+  const featuredGrid = document.getElementById("featured-projects-grid");
   const projectsGrid = document.getElementById("projects-grid");
   const filterBar = document.getElementById("filter-bar");
   let activeFilter = "all";
 
-  function renderProjects() {
-    if (!projectsGrid || typeof PROJECTS === "undefined") return;
-    const filtered =
-      activeFilter === "all"
-        ? PROJECTS
-        : PROJECTS.filter((p) => p.category === activeFilter);
+  const LIVE_PROJECT_ORDER = [
+    "intuit-ai-governance",
+    "incremental-pipelines",
+    "amazon-migration",
+  ];
 
-    projectsGrid.innerHTML = filtered
-      .map((p) => {
-        const isDraft = p.status === "draft";
-        const linkLabel = isDraft ? "Case study coming soon" : "Read case study →";
-        const href = isDraft ? "#" : p.href;
-        const highlights =
-          Array.isArray(p.highlights) && p.highlights.length
-            ? `<ul class="project-highlights">${p.highlights
-                .map((h) => `<li>${escapeHtml(h)}</li>`)
-                .join("")}</ul>`
-            : "";
+  function projectCardHtml(p) {
+    const isDraft = p.status === "draft";
+    const linkLabel = isDraft ? "Case study coming soon" : "Read case study →";
+    const href = isDraft ? "#" : p.href;
+    const highlights =
+      Array.isArray(p.highlights) && p.highlights.length
+        ? `<ul class="project-highlights">${p.highlights
+            .map((h) => `<li>${escapeHtml(h)}</li>`)
+            .join("")}</ul>`
+        : "";
 
-        return `
+    return `
         <article class="project-card${isDraft ? " coming-soon" : ""}">
           <div class="project-tags">
             ${p.tags.map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join("")}
@@ -86,8 +85,30 @@
           ${highlights}
           <a class="card-link" href="${escapeHtml(href)}">${linkLabel}</a>
         </article>`;
-      })
-      .join("");
+  }
+
+  function renderFeaturedProjects() {
+    if (!featuredGrid || typeof PROJECTS === "undefined") return;
+    const live = PROJECTS.filter((p) => p.status === "live");
+    live.sort((a, b) => {
+      const ia = LIVE_PROJECT_ORDER.indexOf(a.id);
+      const ib = LIVE_PROJECT_ORDER.indexOf(b.id);
+      const rankA = ia === -1 ? 999 : ia;
+      const rankB = ib === -1 ? 999 : ib;
+      return rankA - rankB;
+    });
+    featuredGrid.innerHTML = live.map(projectCardHtml).join("");
+  }
+
+  function renderProjects() {
+    if (!projectsGrid || typeof PROJECTS === "undefined") return;
+    const drafts = PROJECTS.filter((p) => p.status === "draft");
+    const filtered =
+      activeFilter === "all"
+        ? drafts
+        : drafts.filter((p) => p.category === activeFilter);
+
+    projectsGrid.innerHTML = filtered.map(projectCardHtml).join("");
   }
 
   if (filterBar && typeof PROJECT_FILTERS !== "undefined") {
@@ -107,6 +128,7 @@
     });
   }
 
+  renderFeaturedProjects();
   renderProjects();
 
   function escapeHtml(str) {

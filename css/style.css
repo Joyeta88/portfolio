@@ -329,6 +329,21 @@ a:hover {
 }
 
 /* Projects */
+.projects-subhead {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: var(--text);
+}
+
+.projects-subhead--filter {
+  margin-top: 2.5rem;
+}
+
+#featured-projects-grid {
+  margin-bottom: 0.5rem;
+}
+
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
