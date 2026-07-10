@@ -71,7 +71,9 @@
 
   const LIVE_PROJECT_ORDER = [
     "intuit-ai-governance",
+    "agent-orchestration-marketplace",
     "incremental-pipelines",
+    "conversion-rate-waterfall",
     "amazon-migration",
   ];
 
