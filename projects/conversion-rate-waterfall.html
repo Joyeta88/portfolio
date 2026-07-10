@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Case study: year-over-year conversion rate waterfall with experiment counterfactuals, Kitagawa decomposition, and executive variance narrative." />
+  <title>Conversion Rate Waterfall | Joyeta Chatterjee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
+  <style>
+    #waterfall-chart { width: 100%; height: 420px; margin: 1.25rem 0 0.5rem; border-radius: 10px; background: var(--surface, #fff); }
+    .chart-note { font-size: 0.8rem; color: var(--muted, #6b7280); margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">Joyeta Chatterjee</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <article class="case-study">
+    <div class="container container--wide">
+      <a class="case-back" href="../index.html#projects">← Back to projects</a>
+
+      <p class="eyebrow">Analytics · Variance decomposition · Experimentation</p>
+      <h1>Year-over-year conversion rate waterfall</h1>
+      <p class="lead">
+        Decomposed a large seasonal attach-rate improvement into three explainable drivers—experience
+        optimization, funnel routing, and customer mix—using counterfactuals, Kitagawa decomposition,
+        and a leadership-ready waterfall that reconciles to the official scorecard definition.
+      </p>
+
+      <div class="case-meta">
+        <span class="tag">YoY bridge</span>
+        <span class="tag">A/B counterfactuals</span>
+        <span class="tag">Kitagawa</span>
+        <span class="tag">SQL warehouse</span>
+        <span class="tag">Executive narrative</span>
+      </div>
+
+      <h2>Impact at a glance</h2>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <span class="value">3 drivers</span>
+          <span class="label">Named mechanisms covering ~100% of observed YoY delta</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">~75%</span>
+          <span class="label">Share attributed to durable UX change (illustrative allocation)</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">DOW-aligned</span>
+          <span class="label">Weekly validation confirmed single dominant treatment signature</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">2–3 days</span>
+          <span class="label">First full bridge after metric contract sign-off</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Outcome:</strong> Finance, product, and experimentation aligned on <em>why</em> the rate
+          moved—not just that it moved. The new rate became the structural baseline for next-season planning,
+          with explicit flags for non-durable tailwinds (routing changes, macro mix).
+        </p>
+      </div>
+
+      <h2>Business question</h2>
+      <p>
+        At end of season, leadership saw attach rate (eligible completers who took an optional paid add-on)
+        jump year-over-year while eligible volume stayed nearly flat. The ask: quantify the total delta,
+        attribute it to stakeholder-recognizable drivers, and separate durable product gains from
+        one-time environmental effects.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  Q["Why did attach rate\noverperform YoY?"]
+  M["Lock metric contract\nnumerator · denominator · window"]
+  H["Hypothesis set\nUX · routing · mix"]
+  D["Driver models\ncounterfactual + Kitagawa"]
+  W["Waterfall + exec narrative"]
+  Q --> M --> H --> D --> W</div>
+        </div>
+        <figcaption>Figure 1 — Analysis cascade from question to published bridge.</figcaption>
+      </figure>
+
+      <h2>Metric contract (define once)</h2>
+      <p>Before decomposition, the ratio was locked to the executive scorecard:</p>
+      <table class="case-table">
+        <thead>
+          <tr><th>Component</th><th>Definition</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Numerator</td><td>Distinct customers with completed attach per governed flag—not funnel “select” proxies</td></tr>
+          <tr><td>Denominator</td><td>Distinct eligible completers (same eligibility rules both years)</td></tr>
+          <tr><td>Window</td><td>Full season through filing deadline; day-of-week alignment for YoY compares</td></tr>
+          <tr><td>Grain</td><td>Customer level—never session-level for attach</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Three-driver waterfall</h2>
+      <p>
+        Raw counterfactual lifts often sum to <em>more</em> than the observed delta because drivers overlap
+        (better UX × more people seeing the monetization surface). I used transparent proportional
+        allocation so bars reconcile exactly to the official YoY change.
+      </p>
+
+      <div id="waterfall-chart" role="img" aria-label="Illustrative conversion rate waterfall chart"></div>
+      <p class="chart-note">
+        <strong>Illustrative chart only</strong> — rounded placeholder values (12% → 17%, +5pp) demonstrate
+        methodology and layout. Production analysis used scorecard-anchored rates and driver shares from
+        counterfactual models below.
+      </p>
+
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Mechanism</th>
+            <th>Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Experience optimization</strong></td>
+            <td>Winning landing-page variant live full current season; partial prior season after mid-season ramp</td>
+            <td>Experiment lift ratio × pre-ramp volume counterfactual</td>
+          </tr>
+          <tr>
+            <td><strong>Bypass flow removal</strong></td>
+            <td>Prior-season shortcut skipped monetization surface (~3% view rate vs ~30% standard path)</td>
+            <td>Apply standard-path attach rate to shortcut population</td>
+          </tr>
+          <tr>
+            <td><strong>Value-bucket mix</strong></td>
+            <td>Average customer value shifted toward higher-propensity segments</td>
+            <td>Kitagawa mix effect (rate effect corroborates UX driver)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Driver A — Experiment counterfactual + ramp timing</h2>
+      <p>
+        Prior-season A/B test gave a relative lift ratio <em>R</em> = treatment rate ÷ control rate among the
+        same eligible population. Treatment ramped mid-season; current year ran treatment from day one.
+      </p>
+      <ul>
+        <li>Split prior year into pre-ramp (mostly control UX) and post-ramp volume.</li>
+        <li>Counterfactual pre-ramp rate: <code>r′_pre = r_pre × R</code>.</li>
+        <li>Volume-weighted prior-year counterfactual blends pre and post segments.</li>
+        <li>Raw UX lift = counterfactual minus actual prior-year rate.</li>
+      </ul>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  EXP["Prior-season A/B\nrelative lift R"]
+  RAMP["Ramp date T\npre vs post volume"]
+  CF["Counterfactual PY rate\nif treatment all season"]
+  WK["Weekly DOW-aligned check\nwide gap pre-T · collapse post-T"]
+  EXP --> CF
+  RAMP --> CF
+  CF --> WK</div>
+        </div>
+        <figcaption>Figure 2 — UX driver: experiment ratio applied to pre-ramp population, validated weekly.</figcaption>
+      </figure>
+
+      <p>
+        <strong>Validation signature:</strong> YoY weekly rates showed a wide gap before the aligned ramp week,
+        then collapsed to ~1–2pp once both years had the winning variant—exactly what a single dominant
+        treatment produces. Current-year micro-tests near flat index confirmed incremental tweaks were
+        “inches,” not the YoY story.
+      </p>
+
+      <h2>Driver B — Shortcut / bypass path</h2>
+      <p>
+        A minority of prior-season completers used a shortcut checkout that bypassed the monetization
+        landing page. Attach rate and surface view rate were both materially lower on that path. Shortcut
+        was removed current season.
+      </p>
+      <p>
+        Counterfactual: if shortcut users had followed the standard path at the standard-path attach rate,
+        compute incremental attaches and convert to percentage points on the blended prior-year rate.
+      </p>
+
+      <h2>Driver C — Kitagawa on value buckets</h2>
+      <p>
+        Attach propensity rises with a customer value proxy (refund size, order value, etc.). Kitagawa
+        decomposition separates:
+      </p>
+      <table class="case-table">
+        <thead>
+          <tr><th>Effect</th><th>Interpretation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Rate effect</td><td>Within-bucket attach change (uniform lift → UX story)</td></tr>
+          <tr><td>Mix effect</td><td>Composition shift into higher-propensity buckets (waterfall driver)</td></tr>
+          <tr><td>Interaction</td><td>Joint movement of mix and rate</td></tr>
+        </tbody>
+      </table>
+      <p>
+        For the bridge, only the mix portion was allocated as Driver C so UX (Driver A) was not double-counted.
+      </p>
+
+      <h2>Proportional allocation</h2>
+      <p>
+        Each driver’s share of the observed delta:
+      </p>
+      <p style="font-family: ui-monospace, monospace; font-size: 0.9rem; padding: 1rem; background: var(--stripe, #f3f4f6); border-radius: 8px;">
+        Δᵢ = Δ_obs × (Δᵢ_raw / Σ Δ_raw)
+      </p>
+      <p>
+        Preserves rank order, sums to 100%, and documents raw lifts in appendix for finance reconciliation—
+        no opaque regression residual.
+      </p>
+
+      <h2>How AI accelerated delivery</h2>
+      <ul>
+        <li><strong>Explore</strong> — Iterated warehouse SQL for numerator/denominator parity, bucket cuts, and weekly validation in an agentic IDE.</li>
+        <li><strong>Compose</strong> — Drafted counterfactual math, Kitagawa tables, and executive copy; human review against scorecard totals.</li>
+        <li><strong>Publish</strong> — Built interactive waterfall HTML and nested driver sections for an end-of-season learnings site.</li>
+      </ul>
+      <p>
+        AI sped iteration; the scorecard definition and warehouse totals remained the source of truth.
+      </p>
+
+      <h2>Portable lessons</h2>
+      <ul>
+        <li>Lock the ratio before debating drivers—days are lost to numerator/denominator drift.</li>
+        <li>One large experiment + ramp timing can explain most of a YoY rate story; validate with weekly DOW alignment.</li>
+        <li>Always check <strong>surface view rate</strong> on shortcut paths—not attach rate alone.</li>
+        <li>Kitagawa separates mix from product; uniform bucket rate lifts point to UX, not demographics.</li>
+        <li>Ship attach-rate monitoring on every live monetization surface—silent outages are expensive.</li>
+      </ul>
+
+      <h2>Role & stack</h2>
+      <p>
+        <strong>Role:</strong> Lead analyst — metric contract, decomposition design, validation, executive narrative, publication.<br />
+        <strong>Stack:</strong> SQL warehouse, experimentation mart, customer-level funnel feature tables,
+        Plotly/CSS waterfall, static HTML case study pages, agentic IDE for SQL and documentation.
+      </p>
+
+      <p style="margin-top: 2.5rem;">
+        <a class="btn btn-primary" href="../index.html#projects">More projects</a>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Joyeta Chatterjee</p>
+      <p class="footer-note"><a href="../index.html">Home</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/case-study-mermaid.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof Plotly === 'undefined') return;
+      Plotly.newPlot('waterfall-chart', [{
+        type: 'waterfall',
+        orientation: 'v',
+        x: [
+          'Prior season',
+          'Experience<br>optimization<br>(75%)',
+          'Bypass removal<br>(12%)',
+          'Value mix<br>(13%)',
+          'Current season'
+        ],
+        y: [12.0, 4.0, 0.5, 0.5, 17.0],
+        measure: ['absolute', 'relative', 'relative', 'relative', 'total'],
+        text: ['12.0%', '+4.0pp', '+0.5pp', '+0.5pp', '17.0%'],
+        textposition: 'outside',
+        connector: { line: { color: '#cbd5e1', width: 1.5, dash: 'dot' } },
+        increasing: { marker: { color: '#16a34a' } },
+        totals: { marker: { color: '#2563eb' } }
+      }], {
+        margin: { t: 20, b: 72, l: 56, r: 24 },
+        yaxis: { title: 'Attach / conversion rate (%)', range: [0, 22], dtick: 2, gridcolor: '#e5e7eb' },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        showlegend: false
+      }, { responsive: true, displayModeBar: false });
+    });
+  </script>
+</body>
+</html>

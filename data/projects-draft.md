@@ -28,12 +28,14 @@ Paste bullets under each section. Prompt example:
 
 ---
 
-## eos-waterfall-5de
+## conversion-rate-waterfall
 
-- +7pp YoY attach rate question
-- Kitagawa mix vs rate
-- Three-driver waterfall
-- Leadership EOS narrative
+**Status: LIVE** → `projects/conversion-rate-waterfall.html`
+
+- YoY attach-rate bridge (generalized / public-safe)
+- Three drivers: UX counterfactual, bypass removal, Kitagawa mix
+- Proportional allocation; DOW weekly validation
+- Illustrative Plotly waterfall embedded in case study page
 
 ---
 

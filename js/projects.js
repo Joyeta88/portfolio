@@ -135,14 +135,20 @@ const PROJECTS = [
     status: "live",
   },
   {
-    id: "eos-waterfall-5de",
-    title: "End-of-season variance & waterfall ROI",
+    id: "conversion-rate-waterfall",
+    title: "YoY conversion rate waterfall",
     category: "intuit",
-    tags: ["Finance", "Variance", "Waterfall"],
+    tags: ["Variance", "Waterfall", "Experimentation"],
     summary:
-      "Full-season YoY attach-rate decomposition: Kitagawa mix/rate effects, experiment-linked drivers, and leadership-ready waterfall narrative.",
-    href: "projects/eos-waterfall-5de.html",
-    status: "draft",
+      "Full-season attach-rate bridge: experiment counterfactuals, bypass-path routing, Kitagawa mix—and proportional allocation that reconciles to the scorecard.",
+    highlights: [
+      "3 named drivers covering ~100% of observed YoY delta",
+      "Experiment lift × pre-ramp counterfactual for durable UX attribution",
+      "DOW-aligned weekly validation of single treatment signature",
+      "Leadership waterfall + nested driver deep-dives (published EOS learnings)",
+    ],
+    href: "projects/conversion-rate-waterfall.html",
+    status: "live",
   },
   {
     id: "ckm-metric-governance",
