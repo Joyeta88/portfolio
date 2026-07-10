@@ -28,6 +28,16 @@ Paste bullets under each section. Prompt example:
 
 ---
 
+## agent-orchestration-marketplace
+
+**Status: LIVE** → `projects/agent-orchestration-marketplace.html`
+
+- C+B hybrid: orchestrator + worker agents + marketplace factory
+- Public-safe: no employer/product names or production metrics
+- Mermaid: marketplace flow, orchestrator, meta-agent sequence
+
+---
+
 ## conversion-rate-waterfall
 
 **Status: LIVE** → `projects/conversion-rate-waterfall.html`

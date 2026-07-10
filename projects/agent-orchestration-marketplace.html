@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Case study: multi-agent orchestration on a governed skills marketplace — rules, skills, plugins, coordinator workers, and contributor factory workflow." />
+  <title>Agent Orchestration & Marketplace | Joyeta Chatterjee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">Joyeta Chatterjee</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <article class="case-study">
+    <div class="container container--wide">
+      <a class="case-back" href="../index.html#projects">← Back to projects</a>
+
+      <p class="eyebrow">Agent architecture · Marketplace · Multi-agent orchestration</p>
+      <h1>Orchestrated agents on a governed skills marketplace</h1>
+      <p class="lead">
+        Designed a two-layer agent system for a large analytics organization: a <strong>shared marketplace</strong>
+        that packages rules, skills, and plugins for two IDEs, plus <strong>domain orchestrators</strong> that
+        coordinate specialized worker agents for end-to-end analysis—without letting LLMs improvise metrics or steps.
+      </p>
+
+      <div class="case-meta">
+        <span class="tag">Rules</span>
+        <span class="tag">Skills</span>
+        <span class="tag">Plugins</span>
+        <span class="tag">Orchestrator</span>
+        <span class="tag">Contributor factory</span>
+      </div>
+
+      <h2>Impact at a glance</h2>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <span class="value">2 IDEs</span>
+          <span class="label">One marketplace source → Cursor rules/skills + Claude plugins</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">Coordinator</span>
+          <span class="label">Orchestrator skill routes complex asks to task specialists</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">Factory loop</span>
+          <span class="label">Contribute → review → pull/push for team-wide sync</span>
+        </div>
+        <div class="impact-card">
+          <span class="value">Guardrails</span>
+          <span class="label">Thin always-on rules; heavy logic in on-demand skills</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>
+          <strong>Outcome:</strong> Analysts invoke one entry point for multi-step workflows; platform maintainers
+          ship capabilities once and sync everywhere. Agents coordinate each other through <em>skills and explicit
+          dispatch</em>, not ad-hoc prompt chains—and humans stay in the loop for publication and dedup.
+        </p>
+      </div>
+
+      <h2>Part B — The marketplace factory</h2>
+      <p>
+        A central open-market repo is the single source of truth. Content flows differently per IDE, but
+        authors edit one place.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart TB
+  SRC["Open marketplace repo\nrules/*.mdc · skills/**/SKILL.md"]
+  SRC --> PULL["Pull / sync skill\ninstall to local IDE"]
+  SRC --> BUILD["Build script\nbundle Claude plugins"]
+  PULL --> CUR["Cursor\n~/.cursor/rules + skills"]
+  BUILD --> CLAUDE["Claude Code\nplugins + CLAUDE.md rules block"]
+  CONTRIB["Contributor authors skill"] --> REV["Review skill\ndedup · alwaysApply budget"]
+  REV --> PR["Branch + PR"]
+  PR --> SRC</div>
+        </div>
+        <figcaption>Figure 1 — Marketplace factory: one source, dual consumers, governed contribution loop.</figcaption>
+      </figure>
+
+      <h3>Rules vs skills vs plugins</h3>
+      <table class="case-table">
+        <thead>
+          <tr><th>Artifact</th><th>Role</th><th>When it loads</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Rule</strong> (.mdc)</td>
+            <td>Short guardrail—git hygiene, link routing, SQL orchestrator trigger</td>
+            <td>Automatic when <code>alwaysApply: true</code> (keep count small—token cost)</td>
+          </tr>
+          <tr>
+            <td><strong>Skill</strong> (SKILL.md)</td>
+            <td>Multi-step workflow—test read, pipeline setup, marketplace push</td>
+            <td>On demand via <code>@skill-name</code> in Cursor (not slash picker)</td>
+          </tr>
+          <tr>
+            <td><strong>Plugin</strong> (Claude)</td>
+            <td>Grouped skills by domain—experimentation, MCP setup, metrics</td>
+            <td>User enables plugin; slash commands load full skill body</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Contributor lifecycle skills</h3>
+      <p>Agents follow the same factory skills humans use—meta-workflow, not magic:</p>
+      <ul>
+        <li><strong>Contribute</strong> — scaffold a new skill locally, test triggers, avoid duplicating existing coverage.</li>
+        <li><strong>Review</strong> — audit conflicts, redundant always-on rules, and context-window budget.</li>
+        <li><strong>Push</strong> — scan changes, open branch and PR to the marketplace.</li>
+        <li><strong>Pull</strong> — sync latest rules/skills to the analyst machine after merge.</li>
+      </ul>
+      <p>
+        <strong>Design principle:</strong> Edit <code>skills/</code> in the repo, never generated plugin copies.
+        Regenerate Claude bundles from source so Cursor and Claude Code stay aligned.
+      </p>
+
+      <h2>Part C — Domain orchestrator (coordinator + workers)</h2>
+      <p>
+        For a complex domain (e.g., paid media, CRM, or multi-product monetization), a single monolithic skill
+        becomes unmaintainable. Instead, a <strong>coordinator orchestrator skill</strong> sits above a dozen
+        task skills and decides what to run.
+      </p>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">flowchart LR
+  USER["Analyst request\nweekly exec brief"]
+  ORCH["Orchestrator skill\nparse intent · freshness check"]
+  ORCH --> W1["Worker: top-of-funnel"]
+  ORCH --> W2["Worker: bottom-of-funnel"]
+  ORCH --> W3["Worker: mix model"]
+  ORCH --> W4["Worker: sentiment"]
+  W1 --> QA["Cross-validate totals"]
+  W2 --> QA
+  W3 --> QA
+  W4 --> QA
+  QA --> OUT["Synthesis\nnarrative · slides · chat"]
+  USER --> ORCH</div>
+        </div>
+        <figcaption>Figure 2 — Orchestrator dispatches parallel workers, then QA and synthesis.</figcaption>
+      </figure>
+
+      <h3>When the orchestrator runs vs direct routing</h3>
+      <table class="case-table">
+        <thead>
+          <tr><th>User ask</th><th>Route</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>“Weekly channel performance” (multi-surface)</td><td><strong>Orchestrator</strong> → several workers + synthesis</td></tr>
+          <tr><td>“Run the budget allocator only”</td><td><strong>Direct</strong> to single task skill</td></tr>
+          <tr><td>“Why did yesterday’s pipeline fail?”</td><td><strong>Direct</strong> to debugging skill</td></tr>
+          <tr><td>“Onboard me to this domain”</td><td><strong>Direct</strong> to onboarding skill</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Orchestrator phases (generic)</h3>
+      <ol>
+        <li><strong>Freshness</strong> — confirm warehouse tables cover the requested window (spend vs traffic lag differs).</li>
+        <li><strong>Intent parse</strong> — map question to task skills; skip orchestration for single-skill asks.</li>
+        <li><strong>Parallel dispatch</strong> — invoke workers (sub-agents or sequential skill blocks) with shared date grain.</li>
+        <li><strong>Cross-validation</strong> — reconcile spend, impressions, or funnel totals across worker outputs.</li>
+        <li><strong>Synthesis</strong> — one narrative; route to output skill (slides, formatted chat, HTML brief).</li>
+      </ol>
+
+      <h2>Agents building agents (with human gates)</h2>
+      <p>
+        “Agents building agents” here means <em>structured delegation</em>, not autonomous self-replication:
+      </p>
+      <ul>
+        <li>Parent session loads <strong>orchestrator</strong> → delegates to worker skills (each SKILL.md is an agent contract).</li>
+        <li><strong>Skill-lifecycle intake</strong> runs before new skills—dedup scan across three layers (name, triggers, description).</li>
+        <li><strong>Explore subagents</strong> (read-only) can search the codebase for overlap; parent merges findings into one skill package.</li>
+        <li><strong>Humans approve</strong> PRs to the marketplace—no bypass-permission agent files in the discovery path.</li>
+      </ul>
+
+      <figure class="flow-figure">
+        <div class="mermaid-wrap">
+          <div class="mermaid">sequenceDiagram
+  participant Human
+  participant Parent as Parent agent
+  participant Intake as Skill lifecycle intake
+  participant Explore as Explore subagent
+  participant Market as Marketplace PR
+  Human->>Parent: Need new monitoring skill
+  Parent->>Intake: Dedup existing skills/rules
+  Intake-->>Parent: No conflict / extend X
+  Parent->>Explore: Search patterns + contracts
+  Explore-->>Parent: Sanitized JSON summary
+  Parent->>Human: Draft SKILL.md + rule stub?
+  Human->>Market: Approve PR
+  Parent->>Human: Pull skill to local IDE</div>
+        </div>
+        <figcaption>Figure 3 — Meta-agent flow: intake and explore assist authoring; humans ship to marketplace.</figcaption>
+      </figure>
+
+      <h2>How this pairs with deterministic analytics</h2>
+      <p>
+        Orchestrators handle <em>workflow</em>; separate cascade skills (e.g., SQL orchestrator) handle
+        <em>metric truth</em>: classify intent → resolve contracts → validate dimensions → execute warehouse query.
+        LLM speed sits on top of deterministic guardrails—not instead of them.
+      </p>
+      <p>
+        Related portfolio piece:
+        <a href="conversion-rate-waterfall.html">YoY conversion rate waterfall</a> shows the analytics output;
+        this case study shows the agent stack that makes repeatable investigation possible at org scale.
+      </p>
+
+      <h2>Lessons (portable)</h2>
+      <ul>
+        <li><strong>Few always-on rules.</strong> Every token hits every chat—push procedures into skills.</li>
+        <li><strong>@ not / in Cursor.</strong> Slash picker may not load full SKILL.md; workers hallucinate steps.</li>
+        <li><strong>One orchestrator per domain.</strong> Avoid N×N routing between task skills and output formats.</li>
+        <li><strong>QA between workers.</strong> Parallel agents drift on date grain—reconcile before synthesis.</li>
+        <li><strong>Marketplace before maverick prompts.</strong> If you correct the same thing twice, publish a skill.</li>
+        <li><strong>Generated plugins are read-only.</strong> Always edit source skills and rebuild bundles.</li>
+      </ul>
+
+      <h2>Role & stack</h2>
+      <p>
+        <strong>Role:</strong> Platform-minded analytics lead — marketplace contribution, orchestrator design,
+        governance rules, adoption enablement.<br />
+        <strong>Stack:</strong> Cursor + Claude Code, shared git marketplace, MCP connectors (warehouse, drive, chat),
+        skill-lifecycle and review automation, Mermaid architecture docs, static portfolio case studies.
+      </p>
+
+      <p style="margin-top: 2.5rem;">
+        <a class="btn btn-primary" href="../index.html#projects">More projects</a>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year"></span> Joyeta Chatterjee</p>
+      <p class="footer-note"><a href="../index.html">Home</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/case-study-mermaid.js" defer></script>
+</body>
+</html>

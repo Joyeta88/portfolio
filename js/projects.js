@@ -103,6 +103,22 @@ const PROJECTS = [
     status: "live",
   },
   {
+    id: "agent-orchestration-marketplace",
+    title: "Orchestrated agents & skills marketplace",
+    category: "intuit",
+    tags: ["Agents", "Marketplace", "Orchestration"],
+    summary:
+      "Dual-layer agent design: shared marketplace (rules, skills, plugins, contribute/review/pull loop) plus domain orchestrators that dispatch worker agents and synthesize exec deliverables.",
+    highlights: [
+      "One repo → Cursor rules/skills + Claude plugin bundles",
+      "Coordinator orchestrator with parallel workers + cross-validation",
+      "Skill-lifecycle dedup before agents publish new capabilities",
+      "Thin always-on rules; deterministic SQL cascade separate from workflow",
+    ],
+    href: "projects/agent-orchestration-marketplace.html",
+    status: "live",
+  },
+  {
     id: "incremental-pipelines",
     title: "Semantic medallion pipelines (incremental)",
     category: "intuit",
